@@ -1,62 +1,52 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# TALL Blog
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This project will serve as a testing ground and learning platform. I will be using this blog to develop new features and architectures and improve my knowledge about Laravel, PHP and the [TALL Stack](https://tallstack.dev/).
 
-## About Laravel
+Based on the following tutorial from [Alhassan Kamil](https://dev.to/nayi10): [Create your first blog with TALL](https://dev.to/nayi10/series/11547).
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Technologies
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+The [TALL Stack](https://tallstack.dev/) is a combination of both front-end and back-end libraries/frameworks that makes developing web apps a breeze. TALL is an acronym for Tailwind CSS, Alpine.js, Laravel and Livewire.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+The back-end framework here is Laravel, while Alpine.js and Tailwind CSS are front-end libraries. Laravel Livewire is a bridge between the front-end and the Laravel back-end and brings dynamic data binding to Laravel so you can achieve reactivity and interactivity from the user facing parts of your website with Laravel, instead of using JavaScript.
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## App configuration
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+The first step will be to create our app locally. We will be using [Laravel Sail](https://laravel.com/docs/8.x/sail#introduction) in order to use [Docker](https://www.docker.com/) as our development enviroment.
 
-## Laravel Sponsors
+```bash
+curl -s "https://laravel.build/tall-blog?with=mysql,redis" | bash
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+With our app created we will launch the app with Sail using the following command inside our app's directory.
 
-### Premium Partners
+```bash
+sail up
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
+Now it's time to install the required tools for this project, the TALL Stack and Laravel's starter pack [Jetstream](https://jetstream.laravel.com/2.x/introduction.html) which provides some services out of the box to speed up the development process.
 
-## Contributing
+```bash
+sail composer require laravel/jetstream
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+sail artisan jetstream:install livewire
+```
 
-## Code of Conduct
+```bash
+sail npm install
+sail npm run dev
+sail artisan migrate
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+With npm dependencies installed, built and our migrations run, we've finished the scaffolding of this app. Our app now provides traditional and two-factor authentication, session management and API support. With our containers running we should be able to access our app in [http://localhost:80](http://localhost:80).
 
-## Security Vulnerabilities
+## Links
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+-   [Laravel](https://laravel.com/)
+-   [Laravel Sail](https://laravel.com/docs/8.x/sail#introduction)
+-   [Jetstream](https://jetstream.laravel.com/2.x/introduction.html)
+-   [TALL Stack](https://tallstack.dev/)
