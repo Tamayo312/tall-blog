@@ -91,6 +91,103 @@ sail artisan vendor:publish --tag=jetstream-views
 
 ## DB Management with Laravel
 
+Laravel provides several options to manage an query our databases. In this app we will be focusing on [Eloquent](https://laravel.com/docs/8.x/eloquent#introduction) an Object Relational Mapper (ORM). With Eloquent, each DB table corresponds to a Model in our app that is used to interact with that table.
+
+Models work as data warehouses, any data entering or leaving our app goes through them, they keep track of and update records, they can filter and sort items out, they know how to sanitize and check data for integrity and so much more.
+
+### Database Migrations
+
+As defined in [Laravel Migrations](https://laravel.com/docs/8.x/migrations#introduction): 
+
+> Migrations are like version control for your database, allowing your team to define and share the application's database schema definition. If you have ever had to tell a teammate to manually add a column to their local database schema after pulling in your changes from source control, you've faced the problem that database migrations solve.
+
+This means that migrations allow us to automatically update or modify our DB based on our model structure using config files and shell commands.
+
+### How to create Eloquent models
+
+```bash
+sail artisan make:Model ModelName
+```
+
+```bash
+sail artisan make:model ModelName -m // creates migration too
+sail artisan make:model ModelName -c // creates controller too
+sail artisan make:model ModelName -f // also creates a factory
+sail artisan make:model ModelName -s // also creates a database seeder
+sail artisan make:model ModelName -mfcs // creates migration, factory, controller and seeder
+```
+
+By default, models will be created in `app/Models`. We can specify a custom directory when creating new models.
+
+### How to create Migrations
+
+```bash
+sail artisan make:migration create_model_names_table
+```
+
+This command will create a create_model_names_table migration inside `database/migrations` with two methods `up` (used to create tables, indices and columns) and `down` (used to reverse the actions made by `up`)
+
+### Relationships between Models
+
+In our models, we can define our DB relationships by adding simple methods. In our app, one user will have many posts and a post can't belong to multiple users so we will define a one-to-many relationship.
+
+In `app/Models/User.php` we will add this method to create the relationship:
+
+```php
+/**
+* Get the posts for this user
+*/
+public function posts() {
+    return $this->hasMany(Post::class);
+}
+```
+
+This method will allow us to get a user's posts with `$user->posts` for an existing `User` object.
+
+### Creating a Post model
+
+To create our `Post` model in Laravel we will use the previous command, adding the options to generate the migration, factory and seeder for this model.
+
+```bash
+sail artisan make:Model Post -mfs
+```
+
+With this command we just generated three files for our posts in `database/migrations`, `database/factories` and `database/seeders` respectively.
+
+Our first action will be to modify `Post.php` to define a reverse one-to-many relationship between a post and its owner, a user. Just as the relationship we defined before in `User.php` this piece of code allows us to query an existing `Post` object's user by simply calling `$post->user`.
+
+### Creating a migration for Posts
+
+Next we will define the migration required to create a table to store our `Post` objetcs in the DB. In essence, this migration will serve as the blueprint to define the columns of the table.
+
+Inside the `up` method, we define the columns that will be used in our DB. In this case we will use the following code:
+
+```php
+/**
+ * Add columns for each of the fields defined in our Post model.
+ */
+Schema::create('posts', function (Blueprint $table) {
+    $table->id(); // Auto-incrementing ID
+    $table->string('category');
+    $table->string('excerpt');
+    $table->longText('body');
+    $table->string('title');
+    $table->boolean('is_published')->default(false);
+    $table->string('featured_image');
+    $table->dateTime('published_date');
+    $table->foreignId('user_id')->constrained(); // Foreing Key that references the users table
+    $table->timestamps(); // Automatic creation of created_at and updated_at columns
+});
+```
+
+With this ready, we need to run our migrations in order to update the DB with the new table.
+
+```bash
+sail artisan migrate
+```
+
+
+---
 
 ## Links
 
