@@ -186,6 +186,131 @@ With this ready, we need to run our migrations in order to update the DB with th
 sail artisan migrate
 ```
 
+### Post Factory
+
+Model factories in Laravel allow us to generate dummy data using the Faker PHP library. We will be able to generate random data by specifying various attributes.
+
+We already created a factory the moment we generated the model for our posts, but we could do this separatedly with the following command: 
+
+```bash
+sail artisan make:factory PostFactory
+```
+
+With the `--model` flag we can create a model at the same time. This command generates a file inside `database/factories`, inside this file we will use a `$model` attribute and a `definition` method to define the values to be applied when the factory is executed.
+
+For our `Post` model we will define a method likeso:
+
+```php
+public function definition()
+{
+    return [
+        'category' => $this->faker->text(100),
+        'body' => $this->faker->paragraphs(15, true),
+        'title' => $this->faker->sentence(15),
+        'excerpt' => $this->faker->sentences(3, true),
+        'featured_image' => "post.png", // Hardcoded value for convenience
+        'published_date' => $this->faker->date(),
+        'user_id' => 1, // Hardcoded value for convenience
+        // We didn't define an is_published definition because we already setted a default 'false' value
+    ];
+}
+```
+
+We will also add a published state to our factory. This will be used to modify the default value of the `is_published` column whenever we want to make a particular post as published.
+
+```php
+/**
+ * Indicates the post is published.
+ *
+ * @return \Illuminate\Database\Eloquent\Factories\Factory
+ */
+public function published()
+{
+    return $this->state(function (array $attributes) {
+        return [
+            'is_published' => true,
+            'published_date' => now(),
+        ];
+    });
+}
+```
+
+To use factories we could do it using the following code:
+
+```php
+//Creates a post without persisting to database
+$post = Post::factory()->make();
+
+// Same as above, but creates five(5) posts
+$post = Post::factory()->count(5)->make();
+
+// Same as above, but sets the published state to true
+$post = Post::factory()->count(5)->published()->make()﻿;
+
+//Creates a post and persists it to database
+$post = Post::factory()->create();
+
+// Same as persisting, but creates five(5) posts
+$post = Post::factory()->count(5)->create();
+
+// Same as persisting, but sets the published state to true
+$post = Post::factory()->count(5)->published()->create();
+```
+
+### Post Seeder
+
+While model facotries let you create sample data for your models, database seeders actually insert these data into the database. Seeders don't necessarily have to depend on factories to insert data.
+
+Seeders are placed in the `database/seeders` directory an contain a `run` method, called when the `db:seed` command is executed. Using the base `DatabaseSeeder` class provided by Laravel we can run our seeders by providing them in the `call` method of this class.
+
+To create a DB seeder we can use the following command:
+
+```bash
+sail artisan make:seeder PostSeeder
+```
+
+In our case, we will define our `run` method in `PostSeeder` using the factory we defined previously using the following code
+
+```php
+/**
+ * Run the database seeds.
+ *
+ * @return void
+ */
+public function run()
+{
+    Post::factory()
+            ->count(20)
+            ->published()
+            ->create();
+}
+```
+
+With this seeder we will create 20 post records in our DB, specifying that each of them will be published.
+
+Lastly, we will open `DatabaseSeeder` and add this seeder to the class, this will ensure that it will be run when executing our seeders.
+
+```php
+ /**
+ * Seed the application's database.
+ *
+ * @return void
+ */
+public function run()
+{
+    $this->call([
+        PostSeeder::class,
+    ]);
+}
+```
+
+Though we could just run the `PostSeeder` without adding it here, doing it this way keeps your seeders organized an decoupled and can be run from a single central point.
+
+We are ready to run the seeder using:
+
+```bash
+sail artisan db:seed
+```
 
 ---
 
