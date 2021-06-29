@@ -1,5 +1,10 @@
 <?php
 
+use App\Http\Livewire\CategoryPosts;
+use App\Http\Livewire\Detail;
+use App\Http\Livewire\EditPost;
+use App\Http\Livewire\FeaturedImageUpload;
+use App\Http\Livewire\NewPost;
 use App\Http\Livewire\ShowPosts;
 use Illuminate\Support\Facades\Route;
 
@@ -16,27 +21,18 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', ShowPosts::class)->name('home');
 
-Route::get('{slug}', function ($slug) {
-    return view('welcome');
-})->name('post-detail');
+Route::get('categories/{category}', CategoryPosts::class)->name('category');
 
-Route::get('category', function ($category) {
-    return view('welcome');
-})->name('category');
-
-/*
- * Adding the middleware 'auth:sanctum' we ensure all the request to the following routes have to be authenticated.
- */
-Route::group(['prefix' => 'dashboard', 'middleware' => 'auth:sanctum', 'verified'], function () {
+Route::group(['prefix' => 'dashboard', 'middleware' => ['auth:sanctum']], function () {
     Route::get('/', function () {
         return view('dashboard');
     })->name('dashboard');
 
-    Route::get('post/add', function () {
-        return view('dashboard');
-    });
+    Route::get('post/add', NewPost::class)->name('new-post');
 
-    Route::get('category/add', function () {
-        return view('dashboard');
-    });
+    Route::get('post/upload/{id}', FeaturedImageUpload::class)->name('upload-featured-image');
+
+    Route::get('post/edit/{id}', EditPost::class)->name('edit-post');
 });
+
+Route::get('{slug}', Detail::class)->name('post-detail');
