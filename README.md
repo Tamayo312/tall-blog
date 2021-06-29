@@ -172,8 +172,9 @@ Schema::create('posts', function (Blueprint $table) {
     $table->string('excerpt');
     $table->longText('body');
     $table->string('title');
+    $table->string('slug');
     $table->boolean('is_published')->default(false);
-    $table->string('featured_image');
+    $table->string('featured_image')->nullable();
     $table->dateTime('published_date');
     $table->foreignId('user_id')->constrained(); // Foreing Key that references the users table
     $table->timestamps(); // Automatic creation of created_at and updated_at columns
@@ -190,7 +191,7 @@ sail artisan migrate
 
 Model factories in Laravel allow us to generate dummy data using the Faker PHP library. We will be able to generate random data by specifying various attributes.
 
-We already created a factory the moment we generated the model for our posts, but we could do this separatedly with the following command: 
+We already created a factory the moment we generated the model for our posts, but we could do this separatedly with the following command:
 
 ```bash
 sail artisan make:factory PostFactory
@@ -311,6 +312,96 @@ We are ready to run the seeder using:
 ```bash
 sail artisan db:seed
 ```
+
+## Livewire
+
+Livewire components are reusable pieces of code that you can define once and use in different parts of your application.
+
+They are just as Laravel components but comes with the power of both Laravel and Livewire. By default, a Livewire component is created with a correpsonding view file.
+
+Livewire component classes are also placed in `app/Http/Livewire` directory while their corresponding views are placed in the `resources/views/livewire` directory.
+
+### Creating Livewire components
+
+We can use `make:livewire` to create a component and its associated views.
+
+```bash
+sail artisan make:livewire PostItem
+```
+
+This command will create the most basic Livewire component, which extends the base Livewire `Component` class and contains a `render` method - used for rendering views and inline text:
+
+```php
+use Livewire\\Component;
+
+class PostItem extends Component {
+    public function render() {
+        return view('livewire.post-item');
+    }
+}
+```
+
+The correspondent view will be in `resources/views/livewire/post-item.blade.php`.
+
+With the `--inline` flag we create *inline* components which won't be returning any view in their `render` method.
+
+```php
+sail artisan make:livewire PostItem --inline
+```
+
+It is important to understand that any `public` property in a Livewire component are readily available in the component's view file, so we don't need to pass it through in the `view` method as we did with a Blade component.
+
+### Rendering Livewire Components
+
+Livewire components are meant to be reusable. As a aresult, you can use them anywhere you would a Laravel component. Rendering a component can be done by either using the `<livewire:component-name/>` tag syntax or by using the `@livewire('component-name')`.
+
+### Passing parameters to Components
+
+We can pass parameters to a component by specifying those parameters like so:
+
+```php
+<livewire:post-item :post="$post" />
+{{-- or --}}
+@livewire('post-item', ['post' => $post])
+```
+
+### Accesing route rest_parameters
+
+In a situation whereby you need to access route parameters like you would in a traditional Laravel controller, Livewire allows you to do that in the `mount` method.
+
+```php
+class MyComponent extends Component {
+    public $userId;
+
+    public function mount($userId) {
+        $this->userId = $userId;
+    }
+
+    public function render() {
+        return view('livewire.my-component');
+    }
+}
+```
+
+### Creating the blog components
+
+Firstly, we are creating a `PostItem` component which will show the information of a single post.
+
+We will use the following command to create the component and the view:
+
+```bash
+sail artisan make:livewire PostItem
+```
+
+Next, we will add a `public $post` attribute in the component. This will make available the post information inside the corresponding view.
+
+To show all the posts we will need yet another component, which will fetch all the post in the DB and display each one in the post item component we just created.
+
+```bash
+sail artisan make:livewire ShowPosts
+```
+
+Inside `ShowPosts` we will use the `mount` method to fetch all the post from DB and load them inside a `public` attribute called `$posts`
 
 ---
 

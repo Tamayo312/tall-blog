@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Livewire\ShowPosts;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,13 +14,15 @@ use Illuminate\Support\Facades\Route;
 |
  */
 
-Route::get('/', function () {
+Route::get('/', ShowPosts::class)->name('home');
+
+Route::get('{slug}', function ($slug) {
     return view('welcome');
-});
+})->name('post-detail');
 
 Route::get('category', function ($category) {
     return view('welcome');
-});
+})->name('category');
 
 /*
  * Adding the middleware 'auth:sanctum' we ensure all the request to the following routes have to be authenticated.

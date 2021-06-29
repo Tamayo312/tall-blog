@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Post;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 class PostFactory extends Factory
 {
@@ -21,13 +22,16 @@ class PostFactory extends Factory
      */
     public function definition()
     {
+        $title = $this->faker->sentence(8);
+
         return [
             'category' => $this->faker->text(100),
-            'body' => $this->faker->paragraphs(15, true),
-            'title' => $this->faker->sentence(15),
+            'body' => "<p class='my-2'>" . implode("</p><p class='my-2'>", $this->faker->paragraphs(15)) . "</p>",
+            'title' => $title,
             'excerpt' => $this->faker->sentences(3, true),
             'featured_image' => "post.png", // Hardcoded value for convenience
             'published_date' => $this->faker->date(),
+            'slug' => Str::slug($title),
             'user_id' => 1, // Hardcoded value for convenience
             // We didn't define an is_published definition because we already setted a default 'false' value
         ];
